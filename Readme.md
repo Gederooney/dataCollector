@@ -1,4 +1,3 @@
-
 > # Data Collector Api
 >
 > - Description
@@ -20,9 +19,8 @@
 > - Usage
 
 > Before pushing to production, make sure you install all the dependances and add the needed variables to your process
-> environment. 	
->	*ENV VARIBLES YOU NEED
->		-SOCCER_DATA_URL="https://www.espn.com/soccer/scoreboard"
->		-MONGO_URI= YOUR_MONGO_URI_GOES_HERE
->		-NODE_ENV="development" ==> for dev
->		-PORT=3001
+> environment.
+> - SOCCER_DATA_URL="https://www.espn.com/soccer/scoreboard".
+> - MONGO_URI= YOUR_MONGO_URI_GOES_HERE
+> - NODE_ENV="development" ==> for dev
+> - PORT=3001
