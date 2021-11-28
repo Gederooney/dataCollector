@@ -1,0 +1,28 @@
+{
+  "name": "datacollectorfortutosport",
+  "version": "1.0.0",
+  "description": "A sport data collection api",
+  "main": "server.js",
+  "scripts": {
+    "test": "ts-node server.ts >> log.txt",
+    "start": "",
+    "dev": "nodemon server.ts"
+  },
+  "dependencies": {
+    "axios": "^0.24.0",
+    "cheerio": "^1.0.0-rc.10",
+    "cors": "^2.8.5",
+    "dotenv": "^10.0.0",
+    "express": "^4.17.1",
+    "mongoose": "^6.0.13",
+    "tslog": "^3.2.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.12",
+    "@types/express": "^4.17.13",
+    "@types/node": "^16.11.10",
+    "nodemon": "^2.0.15",
+    "ts-node": "^10.4.0",
+    "typescript": "^4.5.2"
+  }
+}
