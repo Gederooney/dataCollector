@@ -4,8 +4,8 @@
   "description": "A sport data collection api",
   "main": "server.js",
   "scripts": {
-    "test": "ts-node server.ts >> log.txt",
-    "start": "",
+    "test": "ts-node server.ts",
+    "start": "nodemon server.ts",
     "dev": "nodemon server.ts"
   },
   "dependencies": {
