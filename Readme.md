@@ -14,7 +14,7 @@
 
 > - Scrapping the data
 >
-> I first of all fectch the html using node fectch a non-blocking way then use cheerio to load the response to html.
+> I first of all fetch the html using node axios a non-blocking way, then use cheerio to load the response to html.
 > I then parse the html to extract the needed data before saving the result into my mongo atlas db
 
 > - Who is this for
