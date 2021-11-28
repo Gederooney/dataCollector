@@ -1,7 +1,9 @@
-> # Data Collector Api
+> ### Data Collector Api
 >
 > - Languages and frameworks
->
+>   1. Typescript
+>	2. Eheerio
+>	3. Express
 > - Description
 >
 > This project is a **node js** project build in **typeScript**.
@@ -22,6 +24,7 @@
 
 > Before pushing to production, make sure you install all the dependances and add the needed variables to your process
 > environment.
+>
 > - SOCCER_DATA_URL="https://www.espn.com/soccer/scoreboard".
 > - MONGO_URI= YOUR_MONGO_URI_GOES_HERE
 > - NODE_ENV="development" ==> for dev
