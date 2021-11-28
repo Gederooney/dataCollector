@@ -1,0 +1,24 @@
+const id = new Date().getTime();
+      const date: string = formatDate();
+      try {
+        const find = await Datamodel.findOne({
+          date: date,
+        });
+        if (!find) {
+          const newScore = new Datamodel({
+            id: id,
+            date: date,
+            data: data,
+          });
+          log.info("Saved to db");
+          newScore.save();
+        } else {
+          await Datamodel.findOneAndUpdate({ date: date }, { data: data });
+        }
+      } catch (error: unknown) {
+        console.log(error);
+        log.debug("Failed while saving to db");
+        return null;
+      }
+      return { id: id, date: date, data: data };
+    }

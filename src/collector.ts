@@ -1,47 +1,41 @@
 import axios, { AxiosResponse } from "axios";
-import cheerio, { CheerioAPI } from "cheerio";
-import { ReturnType, IScore } from "./inerfaces";
+import cheerio, { load } from "cheerio";
+import { IScore, IData } from "./inerfaces";
+import { Server } from "socket.io";
 import { Logger } from "tslog";
 import dotenv from "dotenv";
 import Datamodel from "../models/data";
 import { formatDate } from "../utils/date";
-import fs from "fs";
+import { Mongoose } from "mongoose";
+
+type CheerioRoot = ReturnType<typeof load>;
 
 const log = new Logger({ name: "SoccerData logs" });
 dotenv.config();
 
 export default class Collector {
   url: string = process.env.SOCCER_DATA_URL || "";
-  data: any;
-  async fetchHtml(): Promise<any | ReturnType> {
+  async fetchHtml(): Promise<string | null> {
     try {
-      log.info({
-        Source: "Collector",
-        message: `Feching html from ${this.url}`,
-      });
+      log.info(`Fetching html from ${this.url}`);
       if (this.url !== "") {
         const res: AxiosResponse = await axios.get(this.url);
-        return { sucess: true, data: res.data };
+        return res.data;
       } else {
-        return { sucess: false, message: "No link was found in env" };
+        return null;
       }
-    } catch (err: any) {
+    } catch (err) {
       log.debug({
         source: "collector",
         message: "There was an error while fetching html",
-        error: `${err.message}`,
+        error: `${err}`,
       });
-      return { sucess: false, message: `${err.message}` };
+      return null;
     }
   }
-  async parseData(data: any): Promise<IScore[] | ReturnType> {
-    if (!data) {
-      return {
-        sucess: false,
-        message: "No data was received. Couldn't proceed",
-      };
-    }
-    const $: CheerioAPI = cheerio.load(data);
+  async parseData(res: string | null): Promise<IScore[] | null> {
+    if (!res) return null;
+    const $: CheerioRoot = cheerio.load(res);
     const scripts: Array<any> = $("script").toArray();
     const soccerDataScript = scripts.find((script) => {
       return (
@@ -49,7 +43,7 @@ export default class Collector {
         script.children[0].data.includes("window.espn.scoreboardData")
       );
     })?.children[0].data;
-    let parsedData = soccerDataScript
+    const parsedData = soccerDataScript
       .replace("window.espn.scoreboardData", "")
       .replace("=", "")
       .replace(
@@ -63,11 +57,11 @@ export default class Collector {
     const { scores } = await JSON.parse(parsedData);
     let rtn: IScore[] = [];
     if (scores) {
-      rtn = scores.map((s: any, i: number) => {
+      rtn = scores.map((s: any) => {
         let events = [];
         if (s.events) {
           events = s.events.map((e: any) => {
-            let competitions = e.competitions.map((c: any) => {
+            const competitions = e.competitions.map((c: any) => {
               return {
                 date: c.date,
                 venue: c.venue,
@@ -119,49 +113,40 @@ export default class Collector {
     }
     return rtn;
   }
-  async saveDataInDB(data: any): Promise<void> {
-    if (data) {
+  async saveDataInDB(res: IScore[] | null): Promise<IData | null> {
+    const date: string = formatDate();
+    if (res) {
       try {
-        const date: string = formatDate();
-        const find = await Datamodel.findOne({
-          date: date,
-        });
-        if (!find) {
-          const newScore = new Datamodel({
+        let data = await Datamodel.findOne({ date: date });
+        if (data) {
+          return await Datamodel.findOneAndUpdate(
+            { date: date },
+            { $set: res },
+            { new: true }
+          );
+        } else {
+          data = new Datamodel({
             id: new Date().getTime(),
             date: date,
-            data: data,
+            data: res,
           });
-          await newScore.save();
-          log.info("Saved to db");
-        } else {
-          Datamodel.findOneAndUpdate({ date: date }, { data: data });
-          log.info("data updated");
+          return await data.save();
         }
       } catch (error) {
-        console.log(error);
-        log.debug({
-          source: "collector saving to db",
-          message: "Failed while saving to db",
-        });
+        log.debug(error);
       }
     }
+    return null;
   }
-  async run(): Promise<void> {
+  async run(io: Server): Promise<void> {
     this.fetchHtml()
-      .then((res: ReturnType | any) => {
-        const { sucess, data } = res;
-        if (sucess)
-          this.parseData(data).then(async (data) => {
-            this.saveDataInDB(data);
-          });
+      .then((res) => this.parseData(res))
+      .then((res) => this.saveDataInDB(res))
+      .then((res) => {
+        res && io.emit("dataUpdated", res);
       })
-      .catch((error) => {
-        log.debug({
-          source: "collector",
-          message: "there was an error with cheerio",
-          error: `${error.message}`,
-        });
-      });
+      .catch((err) =>
+        log.debug("An Error occured while trying to update or fectch data")
+      );
   }
 }
