@@ -21,7 +21,9 @@ connectDB().then((data: ReturnType) => {
       const collector = new Collector();
       collector
         .run()
-        .then(async () => {})
+        .then(async () => {
+          log.info("Data collected successfuly");
+        })
         .catch((err: unknown) => {
           log.debug({
             source: "server root",

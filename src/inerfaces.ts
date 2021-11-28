@@ -1,7 +1,5 @@
 // Mongoose connection options
 
-import { Mongoose } from "mongoose";
-
 export interface ConnectionOptions {
   useNewUrlParser: boolean;
   useUnifiedTopology: boolean;
