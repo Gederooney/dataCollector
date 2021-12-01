@@ -6,11 +6,11 @@ import { Logger } from "tslog";
 import dotenv from "dotenv";
 import Datamodel from "../models/data";
 import { formatDate } from "../utils/date";
-import { Mongoose } from "mongoose";
+import fs from "fs";
 
 type CheerioRoot = ReturnType<typeof load>;
 
-const log = new Logger({ name: "SoccerData logs" });
+const log = new Logger({ name: "Server roots logs" });
 dotenv.config();
 
 export default class Collector {
@@ -119,22 +119,25 @@ export default class Collector {
       try {
         let data = await Datamodel.findOne({ date: date });
         if (data) {
-          return await Datamodel.findOneAndUpdate(
+          data = await Datamodel.findOneAndUpdate(
             { date: date },
             { $set: res },
             { new: true }
           );
+          log.info("Data are updated");
         } else {
           data = new Datamodel({
             id: new Date().getTime(),
             date: date,
             data: res,
           });
-          return await data.save();
+          await data.save();
+          log.info("Data saved to db");
         }
       } catch (error) {
         log.debug(error);
       }
+      return { id: new Date().getTime(), date: date, data: res };
     }
     return null;
   }
@@ -145,8 +148,9 @@ export default class Collector {
       .then((res) => {
         res && io.emit("dataUpdated", res);
       })
-      .catch((err) =>
-        log.debug("An Error occured while trying to update or fectch data")
-      );
+      .catch((err) => {
+        log.debug("An Error occured while trying to update or fectch data");
+        log.debug(`${err}`);
+      });
   }
 }

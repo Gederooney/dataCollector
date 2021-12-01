@@ -6,9 +6,11 @@ import Collector from "./src/collector";
 import connectDB from "./config/db";
 import { ReturnType } from "./src/inerfaces";
 import Datamodel from "./models/data";
+import { formatDate } from "./utils/date";
 
 import { Server } from "socket.io";
 import { createServer } from "http";
+import { format } from "path/posix";
 
 dotenv.config();
 const App = express();
@@ -19,31 +21,30 @@ const PORT: string | number = process.env.PORT || 3001;
 App.use(cors());
 const httpServer = createServer(App);
 
-const io = new Server(httpServer, {});
+const io = new Server(httpServer, {
+  cors: { origin: "*" },
+});
 
 io.on("connection", (socket) => {
-  //
+  log.info("new connexion");
 });
 connectDB().then((data: ReturnType) => {
-  const { sucess, message } = data;
+  const { sucess } = data;
   if (sucess) {
-    log.info({ source: "Server root", message: message });
+    log.info("Connected to db");
     setInterval(() => {
       const collector = new Collector();
       collector.run(io);
     }, 1000 * 60);
   } else {
-    log.debug({
-      source: "Server root",
-      message: "Couldn't connect to db. Connexion failed",
-    });
+    log.debug("Couldn't connect to db");
   }
 });
 
 App.get("/", async (req: Request, res: Response) => {
-  const date = new Date();
+  const date: string = formatDate();
   Datamodel.findOne({
-    date: `${date.getFullYear()}${date.getMonth() + 1}${date.getDate()}`,
+    date: date,
   })
     .then((data) => {
       res.status(200).json(data);

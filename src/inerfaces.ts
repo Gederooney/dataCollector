@@ -32,19 +32,20 @@ export interface ISeason {
   type: number;
   slug: string;
 }
-export interface IStatus {
+export interface IEStype {
+  name: string;
+  description: string;
+  id: string;
+  state: string;
+  completed: boolean;
+  detail: string;
+  shortDetail: string;
+}
+export interface IEstatus {
   period: number;
   displayClock: string;
   clock: number;
-  type: {
-    name: string;
-    description: string;
-    id: string;
-    state: string;
-    completed: boolean;
-    detail: string;
-    shortDetail: string;
-  };
+  type: IEStype;
 }
 export interface IElink {
   isExternal: boolean;
@@ -171,7 +172,7 @@ export interface IEvent {
   isTopEvent: boolean;
   id: string;
   shortName: string;
-  status: IStatus;
+  status: IEstatus;
   links: IElink[];
   competitions: IEcompetition[];
 }
