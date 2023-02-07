@@ -2,7 +2,7 @@
 >
 > - Languages and frameworks
 >	1. Typescript
->	2. Eheerio
+>	2. Cheerio
 >	3. Express
 >
 > - Description
