@@ -1,6 +1,6 @@
 # Soccer Data Collector
 
-A free, easy-to-use soccer data collector built with Puppeteer.
+A free, easy-to-use soccer data collector built with Nodejs-express.
 
 ## Data Collector API
 
