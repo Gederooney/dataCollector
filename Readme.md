@@ -1,34 +1,34 @@
-A free easy to use soccer data collector made with puppeteer
+# Soccer Data Collector
 
-> ### Data Collector Api
->
-> - Languages and frameworks
->	1. Typescript
->	2. Cheerio
->	3. Express
->
-> - Description
->
-> This project is a **node js** project build in **typeScript**.
-> I built it to only collect sport data for another usage. Therefore, the server will not accept request
-> on other routes than **"/"** and will return the current data if so or an error.
-> They data are scraped from several sources on the web.
+A free, easy-to-use soccer data collector built with Puppeteer.
 
-> - Scrapping the data
->
-> I first of all fetch the html using node axios a non-blocking way, then use cheerio to load the response to html.
-> I then parse the html to extract the needed data before saving the result into my mongo atlas db
+## Data Collector API
 
-> - Who is this for
->
-> Anyone looking to collect live sport data can clone and use this repo.
+### Languages and Frameworks
 
-> - Usage
+1. TypeScript
+2. Cheerio
+3. Express
 
-> Before pushing to production, make sure you install all the dependances and add the needed variables to your process
-> environment.
-> - 
->	1. SOCCER_DATA_URL="https://www.espn.com/soccer/scoreboard".
-> 	2. MONGO_URI= YOUR_MONGO_URI_GOES_HERE
->	3. NODE_ENV="development" ==> for dev
-> 	4. PORT=3001
+### Description
+
+This project is a Node.js application built in TypeScript. It is designed to collect sports data for other uses. The server only accepts requests on the root route (`/`) and returns the current data or an error.
+
+The data is scraped from various sources on the web.
+
+### Scraping the Data
+
+The HTML is fetched using `axios`, a non-blocking approach. Then, `cheerio` is used to load the response into HTML. The HTML is parsed to extract the required data before saving the result to a MongoDB Atlas database.
+
+### Who is this for
+
+Anyone looking to collect live sports data can clone and use this repository.
+
+### Usage
+
+Before deploying to production, make sure to install all dependencies and add the required variables to your environment:
+
+1. `SOCCER_DATA_URL="https://www.espn.com/soccer/scoreboard"`
+2. `MONGO_URI=YOUR_MONGO_URI_GOES_HERE`
+3. `NODE_ENV="development"` (for development)
+4. `PORT=3001`
