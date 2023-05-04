@@ -1,3 +1,5 @@
+A free easy to use soccer data collector made with puppeteer
+
 > ### Data Collector Api
 >
 > - Languages and frameworks
